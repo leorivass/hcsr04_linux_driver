@@ -8,7 +8,7 @@ int main() {
 	int fd;
 	char distancia[10];
 
-	fd = open("/dev/hcsr00", O_RDONLY);
+	fd = open("/dev/hcsr04_1", O_RDONLY);
 
 	while (1) {
 		read(fd, distancia, sizeof(distancia));
