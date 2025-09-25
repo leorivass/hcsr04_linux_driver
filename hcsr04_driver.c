@@ -47,8 +47,12 @@ static ssize_t get_distance(struct file *filp, char __user *user_buffer, size_t 
     udelay(10);
     gpiod_set_value(trigger, 0);
 
+	/* 
+ 	 *	wait_event_interruptible_timeout() blocks the process until the interrupt handler sets pulse_ready to true or timeout expires.
+	 * 	This avoids busy-waiting and allows other processes to run while we wait for the echo pulse measurement to complete.
+	 */
+	
     pulse_ready = false;
-    
     wait_event_interruptible_timeout(echo_wq, pulse_ready, msecs_to_jiffies(TIMEOUT));
 
     if (!pulse_ready) 
@@ -83,6 +87,12 @@ static struct file_operations fops = {
 static irqreturn_t echo_isr(int irq, void *dev_id) {
 
 	uint8_t value = gpiod_get_value(echo);
+
+	/*
+	 * 	After trigger pulse, echo pin goes HIGH when ultrasonic burst starts. Echo pin goes low when reflected signal returns.
+	 *	The pulse duration is equal to the difference between the time at the end of the pulse and the time at the start of it.
+	 *	ktime_get() function gets the exact time in nanoseconds.
+	 */
 
 	if (value) {
 		start_time = ktime_get();
