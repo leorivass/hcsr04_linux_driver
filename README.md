@@ -29,32 +29,30 @@ A Linux kernel driver for the HC-SR04 ultrasonic distance sensor using GPIO inte
 
 ## Installation
 
-### 1. Load the kernel module
+### 1. Compile the driver
+```bash
+make
+```
+
+### 2. Load the kernel module
 ```bash
 sudo insmod hcsr04_driver.ko
 ```
 
-### 2. Check driver loading
+### 3. Compile test.c
 ```bash
-dmesg | tail
-# Should show: "hcsr04_driver {major_number} - Driver initialized successfully"
-```
-
-### 3. Create device file
-```bash
-# Find the major number from dmesg output
-sudo mknod /dev/hcsr00 c <major_number> 0
+gcc test.c
 ```
 
 ## Usage
 
 ### Reading distance measurements
 ```bash
-# Method 1: Using the included user program
+# Method 1: Using the included user program example
 ./a.out
 
 # Method 2: Direct reading from device file
-cat /dev/hcsr00
+cat /dev/hcsr04_1
 ```
 
 ### Expected output
@@ -76,9 +74,6 @@ Distance: 15cm
 ```bash
 # Remove the kernel module
 sudo rmmod hcsr04_driver
-
-# Remove device file
-sudo rm /dev/hcsr00
 ```
 
 ## Limitations
@@ -123,5 +118,5 @@ This project is licensed under the GPL v2 - see the `MODULE_LICENSE("GPL")` decl
 
 ### Permission denied on device file
 ```bash
-sudo chmod 666 /dev/hcsr00
+sudo chmod 666 /dev/hcsr04_1
 ```
